@@ -1,0 +1,50 @@
+package api
+
+import (
+	"errors"
+	"io"
+	"net/http"
+	"strings"
+
+	"github.com/ndreyserg/gophermart/internal/model"
+)
+
+func (a *api) CreateOrder(w http.ResponseWriter, r *http.Request) {
+	userID, err := a.session.GetUserID(r)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	b, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	number := strings.Trim(string(b), " ")
+
+	if number == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, err = a.orderService.Create(r.Context(), number, userID)
+
+	if err != nil {
+
+		if errors.Is(err, model.ErrorOrderAllreadyExistOnUser) {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		if errors.Is(err, model.ErrorOrderAllreadyExist) {
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+}

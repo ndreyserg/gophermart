@@ -15,7 +15,15 @@ type App struct {
 }
 
 func (a *App) Run() error {
-	return http.ListenAndServe(":8080", api.NewRouter(a.serviceProvider.UserService(), "eeee"))
+	return http.ListenAndServe(
+		":8080",
+		api.NewRouter(
+			a.serviceProvider.UserService(),
+			a.serviceProvider.OrderService(),
+			a.serviceProvider.AccountService(),
+			"eeee",
+		),
+	)
 }
 
 func (a *App) init(ctx context.Context) error {

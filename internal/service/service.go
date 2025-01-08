@@ -10,3 +10,12 @@ type UserService interface {
 	Register(ctx context.Context, login string, pass string) (*model.User, error)
 	Login(ctx context.Context, login string, pass string) (*model.User, error)
 }
+
+type OrderService interface {
+	Create(ctx context.Context, number string, userID int) (*model.Order, error)
+	GetByUserID(ctx context.Context, userID int) ([]*model.Order, error)
+}
+
+type AccountService interface {
+	Withdraw(ctx context.Context, userID int, orderNumber string, sum float64) error
+}

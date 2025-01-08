@@ -1,6 +1,8 @@
 package session
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -9,7 +11,7 @@ import (
 
 type Session interface {
 	Open(userID int, w http.ResponseWriter, r *http.Request) error
-	GetUserID(r *http.Request) (string, error)
+	GetUserID(r *http.Request) (int, error)
 }
 
 func NewSession(secret string) Session {
@@ -52,6 +54,35 @@ func (s *session) newToken(userID int) (string, error) {
 	return token.SignedString([]byte(s.secret))
 }
 
-func (s *session) GetUserID(r *http.Request) (string, error) {
-	return "", nil
+func (s *session) GetUserID(r *http.Request) (int, error) {
+	var strToken string
+
+	cookies := r.Cookies()
+
+	for _, cookie := range cookies {
+		if cookie.Name == tokenKey {
+			strToken = cookie.Value
+			break
+		}
+	}
+	if strToken == "" {
+		return 0, errors.New("empty token")
+	}
+	claims := &claims{}
+	token, err := jwt.ParseWithClaims(strToken, claims, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return []byte(s.secret), nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	if !token.Valid {
+		return 0, errors.New("invalid token")
+	}
+
+	return claims.UserID, nil
 }
