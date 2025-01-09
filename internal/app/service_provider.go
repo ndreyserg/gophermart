@@ -66,7 +66,7 @@ func (s *serviceProvider) AccountRepository() repository.AccountReposity {
 
 func (s *serviceProvider) AccountService() service.AccountService {
 	if s.accountService == nil {
-		s.accountService = account.NewService(s.AccountRepository())
+		s.accountService = account.NewService(s.AccountRepository(), s.OrderService())
 	}
 	return s.accountService
 }

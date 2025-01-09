@@ -12,4 +12,5 @@ var (
 	ErrorOrderNotFound            = errors.New("order not found")
 	ErrorAccountNotFound          = errors.New("account not found")
 	ErrorAccountNegativeBalance   = errors.New("negative balance")
+	ErrorUncorrectOrederNumber    = errors.New("uncorrect order number")
 )

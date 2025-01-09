@@ -9,6 +9,12 @@ import (
 
 func (s *service) Create(ctx context.Context, number string, userID int) (*model.Order, error) {
 
+	err := s.CheckNumber(number)
+
+	if err != nil {
+		return nil, err
+	}
+
 	order, err := s.orderRepository.Create(ctx, number, userID)
 
 	if err == nil {

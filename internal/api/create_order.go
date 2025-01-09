@@ -22,16 +22,14 @@ func (a *api) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	number := strings.Trim(string(b), " ")
 
-	if number == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	_, err = a.orderService.Create(r.Context(), number, userID)
+	_, err = a.orderService.Create(r.Context(), strings.Trim(string(b), " "), userID)
 
 	if err != nil {
+		if errors.Is(err, model.ErrorUncorrectOrederNumber) {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		}
 
 		if errors.Is(err, model.ErrorOrderAllreadyExistOnUser) {
 			w.WriteHeader(http.StatusOK)

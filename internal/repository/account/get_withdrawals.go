@@ -10,7 +10,9 @@ func (r *repository) GetWithdrawals(ctx context.Context, accID int) ([]*model.Ac
 
 	rows, err := r.db.QueryContext(
 		ctx,
-		`select id, sum, account_id, order_number,  to_char(processed_at, 'YYYY-MM-DD"T"HH24:MI:SSTZH:TZM')  from withdrawals where account_id = $1`,
+		`select id, sum, account_id, order_number,  to_char(processed_at, 'YYYY-MM-DD"T"HH24:MI:SSTZH:TZM')  from withdrawals 
+		where account_id = $1
+		order by processed_at desc`,
 		accID,
 	)
 

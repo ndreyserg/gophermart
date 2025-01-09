@@ -30,11 +30,6 @@ func (a *api) Withdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Order == "" {
-		a.makeErrorResponse(w, "Неверный номер заказа", http.StatusUnprocessableEntity)
-		return
-	}
-
 	if req.Sum <= 0 {
 		a.makeErrorResponse(w, "Неверная сумма", http.StatusUnprocessableEntity)
 		return
@@ -43,6 +38,12 @@ func (a *api) Withdraw(w http.ResponseWriter, r *http.Request) {
 	err = a.accountService.Withdraw(r.Context(), userID, req.Order, req.Sum)
 
 	if err != nil {
+
+		if errors.Is(err, model.ErrorUncorrectOrederNumber) {
+			a.makeErrorResponse(w, "Неверный номер заказа", http.StatusUnprocessableEntity)
+			return
+		}
+
 		if errors.Is(err, model.ErrorAccountNegativeBalance) {
 			w.WriteHeader(http.StatusPaymentRequired)
 			return

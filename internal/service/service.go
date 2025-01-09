@@ -14,6 +14,7 @@ type UserService interface {
 type OrderService interface {
 	Create(ctx context.Context, number string, userID int) (*model.Order, error)
 	GetByUserID(ctx context.Context, userID int) ([]*model.Order, error)
+	CheckNumber(num string) error
 }
 
 type AccountService interface {
