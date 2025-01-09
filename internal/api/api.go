@@ -29,6 +29,8 @@ func NewRouter(userService service.UserService, orderService service.OrderServic
 	a.chi.Post("/api/user/orders", a.CreateOrder)
 	a.chi.Get("/api/user/orders", a.GetUserOrders)
 	a.chi.Post("/api/user/balance/withdraw", a.Withdraw)
+	a.chi.Get("/api/user/balance", a.GetUserBalance)
+	a.chi.Get("/api/user/withdrawals", a.GetUserWithdrawals)
 
 	return a.chi
 }

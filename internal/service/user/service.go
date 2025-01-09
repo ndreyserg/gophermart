@@ -5,7 +5,10 @@ import (
 	"encoding/hex"
 
 	"github.com/ndreyserg/gophermart/internal/repository"
+	def "github.com/ndreyserg/gophermart/internal/service"
 )
+
+var _ def.UserService = (*service)(nil)
 
 func NewService(userRepository repository.UserRepository) *service {
 	return &service{

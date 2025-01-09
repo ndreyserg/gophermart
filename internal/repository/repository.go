@@ -21,4 +21,6 @@ type AccountReposity interface {
 	Create(ctx context.Context, userID int) (*model.Account, error)
 	FindByUserID(ctx context.Context, userID int) (*model.Account, error)
 	Withdraw(ctx context.Context, accountID int, sum float64, orderNumber string) error
+	GetWithdrawn(ctx context.Context, accID int) (float64, error)
+	GetWithdrawals(ctx context.Context, accID int) ([]*model.AccountWithdrawals, error)
 }

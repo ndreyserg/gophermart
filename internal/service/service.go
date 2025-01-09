@@ -18,4 +18,6 @@ type OrderService interface {
 
 type AccountService interface {
 	Withdraw(ctx context.Context, userID int, orderNumber string, sum float64) error
+	GetBalance(ctx context.Context, userID int) (*model.AccountBalance, error)
+	GetWithdrawals(ctx context.Context, userID int) ([]*model.AccountWithdrawals, error)
 }
