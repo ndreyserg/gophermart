@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -19,7 +20,7 @@ func (r *repository) Create(ctx context.Context, login string, passHash string) 
 	)
 
 	if row.Err() != nil {
-		return nil, row.Err()
+		return nil, fmt.Errorf("create user query error: %w,", row.Err())
 	}
 
 	user := model.User{}
@@ -28,9 +29,9 @@ func (r *repository) Create(ctx context.Context, login string, passHash string) 
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrorUserAllreadyExist
+			return nil, model.ErrUserAllreadyExist
 		}
-		return nil, err
+		return nil, fmt.Errorf("create user scan error: %w,", row.Err())
 	}
 
 	return &user, nil

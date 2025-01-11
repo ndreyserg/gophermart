@@ -12,9 +12,9 @@ type AccountBalance struct {
 }
 
 type AccountWithdrawals struct {
-	ID          int     `json:"-"`
-	Sum         float64 `json:"sum"`
-	AccountID   int     `json:"-"`
 	OrderNumber string  `json:"order"`
-	ProcessedAt string	`json:"processed_at"`
+	ProcessedAt string  `json:"processed_at"`
+	ID          int     `json:"-"`
+	AccountID   int     `json:"-"`
+	Sum         float64 `json:"sum"`
 }

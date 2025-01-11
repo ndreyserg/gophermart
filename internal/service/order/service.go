@@ -7,9 +7,9 @@ import (
 
 var _ def.OrderService = (*service)(nil)
 
-func NewService(repository repository.OrderRepository) *service {
+func NewService(repo repository.OrderRepository) *service {
 	return &service{
-		orderRepository: repository,
+		orderRepository: repo,
 	}
 }
 

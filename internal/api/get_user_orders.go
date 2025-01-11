@@ -6,7 +6,6 @@ import (
 )
 
 func (a *api) GetUserOrders(w http.ResponseWriter, r *http.Request) {
-
 	userID, err := a.session.GetUserID(r)
 
 	if err != nil {
@@ -21,7 +20,7 @@ func (a *api) GetUserOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set(contentTypeHeader, contentTypeJSON)
 
 	if len(orders) == 0 {
 		w.WriteHeader(http.StatusNoContent)
@@ -30,5 +29,5 @@ func (a *api) GetUserOrders(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	enc := json.NewEncoder(w)
-	enc.Encode(orders)
+	_ = enc.Encode(orders)
 }

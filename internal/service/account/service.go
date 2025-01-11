@@ -11,9 +11,9 @@ type orderService interface {
 	CheckNumber(num string) error
 }
 
-func NewService(repository repository.AccountReposity, orders orderService) *service {
+func NewService(repo repository.AccountReposity, orders orderService) *service {
 	return &service{
-		accountReposity: repository,
+		accountReposity: repo,
 		orders:          orders,
 	}
 }

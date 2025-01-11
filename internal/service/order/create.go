@@ -3,16 +3,16 @@ package order
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
 
 func (s *service) Create(ctx context.Context, number string, userID int) (*model.Order, error) {
-
 	err := s.CheckNumber(number)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create order check number err: %w", err)
 	}
 
 	order, err := s.orderRepository.Create(ctx, number, userID)
@@ -21,18 +21,18 @@ func (s *service) Create(ctx context.Context, number string, userID int) (*model
 		return order, nil
 	}
 
-	if !errors.Is(err, model.ErrorOrderAllreadyExist) {
-		return nil, err
+	if !errors.Is(err, model.ErrOrderAllreadyExist) {
+		return nil, fmt.Errorf("create order error: %w", err)
 	}
 
 	order, err = s.orderRepository.FindByNumber(ctx, number)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create order error: %w", err)
 	}
 
 	if order.UserID == userID {
-		return nil, model.ErrorOrderAllreadyExistOnUser
+		return nil, model.ErrOrderAllreadyExistOnUser
 	}
-	return nil, model.ErrorOrderAllreadyExist
+	return nil, model.ErrOrderAllreadyExist
 }

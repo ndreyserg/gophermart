@@ -11,14 +11,14 @@ func (s *service) CheckNumber(num string) error {
 	match, _ := regexp.MatchString(`^[0-9]+$`, num)
 
 	if !match {
-		return model.ErrorUncorrectOrederNumber
+		return model.ErrUncorrectOrederNumber
 	}
 
 	sum := 0
 	nDigits := len(num)
 	parity := nDigits % 2
 
-	for i := 0; i < len(num); i++ {
+	for i := range num {
 		digit, _ := strconv.Atoi(string(num[i]))
 
 		if i%2 == parity {
@@ -31,7 +31,7 @@ func (s *service) CheckNumber(num string) error {
 	}
 
 	if sum%10 != 0 {
-		return model.ErrorUncorrectOrederNumber
+		return model.ErrUncorrectOrederNumber
 	}
 
 	return nil

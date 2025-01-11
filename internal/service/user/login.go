@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -11,7 +12,7 @@ func (s service) Login(ctx context.Context, login string, pass string) (*model.U
 	user, err := s.userRepository.FindByLoginAndPassHash(ctx, login, passHash)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("login serivice error: %w", err)
 	}
 
 	return user, nil

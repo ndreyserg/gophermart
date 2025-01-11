@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -21,7 +22,7 @@ func (r *repository) Create(ctx context.Context, number string, userID int) (*mo
 	)
 
 	if row.Err() != nil {
-		return nil, row.Err()
+		return nil, fmt.Errorf("order create query error: %w", row.Err())
 	}
 
 	order := model.Order{}
@@ -30,9 +31,9 @@ func (r *repository) Create(ctx context.Context, number string, userID int) (*mo
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrorOrderAllreadyExist
+			return nil, model.ErrOrderAllreadyExist
 		}
-		return nil, err
+		return nil, fmt.Errorf("order create scan error: %w", err)
 	}
 
 	return &order, nil

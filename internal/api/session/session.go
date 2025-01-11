@@ -51,7 +51,14 @@ func (s *session) newToken(userID int) (string, error) {
 		},
 		UserID: userID,
 	})
-	return token.SignedString([]byte(s.secret))
+
+	res, err := token.SignedString([]byte(s.secret))
+
+	if err != nil {
+		return "", fmt.Errorf("new token error: %w", err)
+	}
+
+	return res, nil
 }
 
 func (s *session) GetUserID(r *http.Request) (int, error) {
@@ -77,7 +84,7 @@ func (s *session) GetUserID(r *http.Request) (int, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("token parse error: %w", err)
 	}
 
 	if !token.Valid {

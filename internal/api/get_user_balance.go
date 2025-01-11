@@ -18,8 +18,8 @@ func (a *api) GetUserBalance(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set(contentTypeHeader, contentTypeJSON)
 	w.WriteHeader(http.StatusOK)
 	e := json.NewEncoder(w)
-	e.Encode(balance)
+	_ = e.Encode(balance)
 }

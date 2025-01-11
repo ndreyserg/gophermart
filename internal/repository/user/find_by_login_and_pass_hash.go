@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -17,7 +18,7 @@ func (r *repository) FindByLoginAndPassHash(ctx context.Context, login string, p
 	)
 
 	if row.Err() != nil {
-		return nil, row.Err()
+		return nil, fmt.Errorf("find user query error: %w,", row.Err())
 	}
 
 	user := model.User{}
@@ -26,9 +27,9 @@ func (r *repository) FindByLoginAndPassHash(ctx context.Context, login string, p
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrorUserNotFound
+			return nil, model.ErrUserNotFound
 		}
-		return nil, err
+		return nil, fmt.Errorf("find user scan error: %w,", err)
 	}
 	return &user, nil
 }

@@ -2,12 +2,12 @@ package account
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
 
 func (r *repository) Create(ctx context.Context, userID int) (*model.Account, error) {
-
 	row := r.db.QueryRowContext(
 		ctx,
 		`insert into accounts (user_id, balance) values ($1, $2) 
@@ -17,7 +17,7 @@ func (r *repository) Create(ctx context.Context, userID int) (*model.Account, er
 	)
 
 	if row.Err() != nil {
-		return nil, row.Err()
+		return nil, fmt.Errorf("query exec error: %w", row.Err())
 	}
 
 	account := model.Account{}
@@ -25,7 +25,7 @@ func (r *repository) Create(ctx context.Context, userID int) (*model.Account, er
 	err := row.Scan(&account.ID, &account.UserID, &account.Balance)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("row scan error: %w", err)
 	}
 
 	return &account, nil

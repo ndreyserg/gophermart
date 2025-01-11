@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -16,7 +17,7 @@ func (r *repository) FindByUserID(ctx context.Context, userID int) (*model.Accou
 	)
 
 	if row.Err() != nil {
-		return nil, row.Err()
+		return nil, fmt.Errorf("repo find exec error: %w", row.Err())
 	}
 
 	account := model.Account{}
@@ -25,9 +26,9 @@ func (r *repository) FindByUserID(ctx context.Context, userID int) (*model.Accou
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrorAccountNotFound
+			return nil, model.ErrAccountNotFound
 		}
-		return nil, err
+		return nil, fmt.Errorf("repo find scan error: %w", err)
 	}
 	return &account, nil
 }

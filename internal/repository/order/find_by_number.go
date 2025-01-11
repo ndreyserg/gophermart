@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -16,7 +17,7 @@ func (r *repository) FindByNumber(ctx context.Context, number string) (*model.Or
 	)
 
 	if row.Err() != nil {
-		return nil, row.Err()
+		return nil, fmt.Errorf("order find query error: %w", row.Err())
 	}
 
 	order := model.Order{}
@@ -25,9 +26,9 @@ func (r *repository) FindByNumber(ctx context.Context, number string) (*model.Or
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, model.ErrorOrderAllreadyExist
+			return nil, model.ErrOrderAllreadyExist
 		}
-		return nil, err
+		return nil, fmt.Errorf("order find scan error: %w", err)
 	}
 
 	return &order, nil

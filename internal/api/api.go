@@ -16,7 +16,14 @@ type api struct {
 	session        session.Session
 }
 
-func NewRouter(userService service.UserService, orderService service.OrderService, accountService service.AccountService, sessionSecret string) http.Handler {
+const contentTypeHeader = "content-type"
+const contentTypeJSON = "application/json"
+
+func NewRouter(
+	userService service.UserService,
+	orderService service.OrderService,
+	accountService service.AccountService,
+	sessionSecret string) http.Handler {
 	a := api{
 		chi:            chi.NewRouter(),
 		userService:    userService,

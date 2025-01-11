@@ -26,17 +26,17 @@ func (a *api) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	_, err = a.orderService.Create(r.Context(), strings.Trim(string(b), " "), userID)
 
 	if err != nil {
-		if errors.Is(err, model.ErrorUncorrectOrederNumber) {
+		if errors.Is(err, model.ErrUncorrectOrederNumber) {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			return
 		}
 
-		if errors.Is(err, model.ErrorOrderAllreadyExistOnUser) {
+		if errors.Is(err, model.ErrOrderAllreadyExistOnUser) {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
 
-		if errors.Is(err, model.ErrorOrderAllreadyExist) {
+		if errors.Is(err, model.ErrOrderAllreadyExist) {
 			w.WriteHeader(http.StatusConflict)
 			return
 		}

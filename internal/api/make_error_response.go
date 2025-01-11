@@ -10,8 +10,8 @@ type errorResponse struct {
 }
 
 func (a *api) makeErrorResponse(w http.ResponseWriter, message string, code int) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set(contentTypeHeader, contentTypeJSON)
 	w.WriteHeader(code)
 	enc := json.NewEncoder(w)
-	enc.Encode(errorResponse{Message: message})
+	_ = enc.Encode(errorResponse{Message: message})
 }

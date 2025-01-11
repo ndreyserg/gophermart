@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -10,13 +11,13 @@ func (s *service) GetBalance(ctx context.Context, userID int) (*model.AccountBal
 	acc, err := s.getOrCreate(ctx, userID)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get balance get account error: %w,", err)
 	}
 
 	w, err := s.accountReposity.GetWithdrawn(ctx, acc.ID)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get balance get withdrawn error: %w,", err)
 	}
 
 	balance := model.AccountBalance{

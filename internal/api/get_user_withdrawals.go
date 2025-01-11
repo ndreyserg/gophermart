@@ -6,7 +6,6 @@ import (
 )
 
 func (a *api) GetUserWithdrawals(w http.ResponseWriter, r *http.Request) {
-
 	userID, err := a.session.GetUserID(r)
 
 	if err != nil {
@@ -26,8 +25,8 @@ func (a *api) GetUserWithdrawals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set(contentTypeHeader, contentTypeJSON)
 	w.WriteHeader(http.StatusOK)
 	e := json.NewEncoder(w)
-	e.Encode(withdrawals)
+	_ = e.Encode(withdrawals)
 }

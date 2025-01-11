@@ -9,12 +9,11 @@ import (
 )
 
 type withdrawRequest struct {
-	Order string
-	Sum   float64
+	Order string  `json:"order"`
+	Sum   float64 `json:"sum"`
 }
 
 func (a *api) Withdraw(w http.ResponseWriter, r *http.Request) {
-
 	userID, err := a.session.GetUserID(r)
 
 	if err != nil {
@@ -38,13 +37,12 @@ func (a *api) Withdraw(w http.ResponseWriter, r *http.Request) {
 	err = a.accountService.Withdraw(r.Context(), userID, req.Order, req.Sum)
 
 	if err != nil {
-
-		if errors.Is(err, model.ErrorUncorrectOrederNumber) {
+		if errors.Is(err, model.ErrUncorrectOrederNumber) {
 			a.makeErrorResponse(w, "Неверный номер заказа", http.StatusUnprocessableEntity)
 			return
 		}
 
-		if errors.Is(err, model.ErrorAccountNegativeBalance) {
+		if errors.Is(err, model.ErrAccountNegativeBalance) {
 			w.WriteHeader(http.StatusPaymentRequired)
 			return
 		}
