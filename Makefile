@@ -29,3 +29,34 @@ _golangci-lint-rm-unformatted-report: _golangci-lint-format-report
 .PHONY: golangci-lint-clean
 golangci-lint-clean:
 	sudo rm -rf ./golangci-lint 
+
+.PHONY: create-migration
+create-migration:
+	-docker run --rm \
+    -v $(realpath ./internal/db/migrations):/migrations \
+    migrate/migrate:v4.18.1 \
+        create \
+        -dir /migrations \
+        -ext .sql \
+        -seq -digits 5 \
+        $(n)
+
+.PHONY: migrations-up
+migrations-up:
+	-docker run --rm \
+    --network gophermart_default \
+    -v $(realpath ./internal/db/migrations):/migrations \
+    migrate/migrate:v4.18.1 \
+        -path=/migrations \
+        -database postgres://gophermart:gophermart@db:5432/gophermart?sslmode=disable \
+        up
+    
+.PHONY: migrations-down
+migrations-down:
+	-docker run --rm \
+    --network gophermart_default \
+    -v $(realpath ./internal/db/migrations):/migrations \
+    migrate/migrate:v4.18.1 \
+        -path=/migrations \
+        -database postgres://gophermart:gophermart@db:5432/gophermart?sslmode=disable \
+        down --all

@@ -15,7 +15,10 @@ type Config struct {
 func NewConfig() *Config {
 	conf := Config{}
 	flag.StringVar(&conf.RunAddress, "a", "localhost:8080", "run address")
-	flag.StringVar(&conf.DatabaseURI, "d", "postgres://gophermart:gophermart@localhost:5432/gophermart", "database uri")
+	flag.StringVar(&conf.DatabaseURI, "d",
+		"postgres://gophermart:gophermart@localhost:5432/gophermart?sslmode=disable",
+		"database uri",
+	)
 	flag.StringVar(&conf.AccrualSystemAderess, "r", "/", "accrual system aderess")
 	flag.StringVar(&conf.SecretKey, "s", "secret_key", "secret key")
 	flag.Parse()
