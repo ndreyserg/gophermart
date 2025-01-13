@@ -13,6 +13,8 @@ type UserRepository interface {
 
 type OrderRepository interface {
 	Create(ctx context.Context, number string, userID int) (*model.Order, error)
+	Update(ctx context.Context, order *model.Order) error
+	UpdateAndAccrue(ctx context.Context, order *model.Order, accountID int) error
 	GetByUserID(ctx context.Context, userID int) ([]*model.Order, error)
 	FindByNumber(ctx context.Context, number string) (*model.Order, error)
 }
@@ -23,4 +25,8 @@ type AccountReposity interface {
 	Withdraw(ctx context.Context, accountID int, sum float64, orderNumber string) error
 	GetWithdrawn(ctx context.Context, accID int) (float64, error)
 	GetWithdrawals(ctx context.Context, accID int) ([]*model.AccountWithdrawals, error)
+}
+
+type AccrualReposity interface {
+	Get(orderNumber string) (*model.Accrual, error)
 }

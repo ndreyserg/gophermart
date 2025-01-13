@@ -7,6 +7,7 @@ const (
 	OrderStatusProcessed  OrderStatus = "PROCESSED"
 	OrderStatusProcessing OrderStatus = "PROCESSING"
 	OrderStatusInvalid    OrderStatus = "INVALID"
+	OrderStatusRegistered OrderStatus = "REGISTERED"
 )
 
 type Order struct {

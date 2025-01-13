@@ -8,7 +8,7 @@ import (
 )
 
 func (s *service) GetBalance(ctx context.Context, userID int) (*model.AccountBalance, error) {
-	acc, err := s.getOrCreate(ctx, userID)
+	acc, err := s.GetOrCreate(ctx, userID)
 
 	if err != nil {
 		return nil, fmt.Errorf("get balance get account error: %w,", err)

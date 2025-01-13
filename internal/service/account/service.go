@@ -7,18 +7,18 @@ import (
 
 var _ def.AccountService = (*service)(nil)
 
-type orderService interface {
-	CheckNumber(num string) error
+type numChecker interface {
+	Check(num string) error
 }
 
-func NewService(repo repository.AccountReposity, orders orderService) *service {
+func NewService(repo repository.AccountReposity, checker numChecker) *service {
 	return &service{
 		accountReposity: repo,
-		orders:          orders,
+		checker:         checker,
 	}
 }
 
 type service struct {
 	accountReposity repository.AccountReposity
-	orders          orderService
+	checker         numChecker
 }

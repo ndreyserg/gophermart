@@ -8,7 +8,7 @@ import (
 	"github.com/ndreyserg/gophermart/internal/model"
 )
 
-func (s *service) getOrCreate(ctx context.Context, userID int) (*model.Account, error) {
+func (s *service) GetOrCreate(ctx context.Context, userID int) (*model.Account, error) {
 	account, err := s.accountReposity.FindByUserID(ctx, userID)
 
 	if err != nil && !errors.Is(err, model.ErrAccountNotFound) {

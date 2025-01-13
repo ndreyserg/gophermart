@@ -5,10 +5,13 @@ import (
 
 	"github.com/ndreyserg/gophermart/internal/repository"
 	accountRepository "github.com/ndreyserg/gophermart/internal/repository/account"
+	accrualRepository "github.com/ndreyserg/gophermart/internal/repository/accrual"
 	orderRepository "github.com/ndreyserg/gophermart/internal/repository/order"
 	userRepository "github.com/ndreyserg/gophermart/internal/repository/user"
 	"github.com/ndreyserg/gophermart/internal/service"
 	"github.com/ndreyserg/gophermart/internal/service/account"
+	"github.com/ndreyserg/gophermart/internal/service/accrual"
+	"github.com/ndreyserg/gophermart/internal/service/checker"
 	"github.com/ndreyserg/gophermart/internal/service/order"
 	"github.com/ndreyserg/gophermart/internal/service/user"
 )
@@ -20,12 +23,17 @@ type serviceProvider struct {
 	orderRepository   repository.OrderRepository
 	accountService    service.AccountService
 	accountRepository repository.AccountReposity
+	accrualRepository repository.AccrualReposity
+	accrualService    service.AccrualService
+	numChecker        service.CheckerSevice
 	db                *sql.DB
+	accrualURI        string
 }
 
-func newServiceProvider(db *sql.DB) *serviceProvider {
+func newServiceProvider(db *sql.DB, accrualURI string) *serviceProvider {
 	return &serviceProvider{
-		db: db,
+		db:         db,
+		accrualURI: accrualURI,
 	}
 }
 
@@ -52,7 +60,12 @@ func (s *serviceProvider) OrderRepository() repository.OrderRepository {
 
 func (s *serviceProvider) OrderService() service.OrderService {
 	if s.orderService == nil {
-		s.orderService = order.NewService(s.OrderRepository())
+		s.orderService = order.NewService(
+			s.OrderRepository(),
+			s.AccrualService(),
+			s.AccountService(),
+			s.NumCheckerService(),
+		)
 	}
 	return s.orderService
 }
@@ -64,9 +77,34 @@ func (s *serviceProvider) AccountRepository() repository.AccountReposity {
 	return s.accountRepository
 }
 
+func (s *serviceProvider) AccrualRepository() repository.AccrualReposity {
+	if s.accrualRepository == nil {
+		s.accrualRepository = accrualRepository.NewRepository(s.accrualURI)
+	}
+	return s.accrualRepository
+}
+
 func (s *serviceProvider) AccountService() service.AccountService {
 	if s.accountService == nil {
-		s.accountService = account.NewService(s.AccountRepository(), s.OrderService())
+		s.accountService = account.NewService(s.AccountRepository(), s.NumCheckerService())
 	}
 	return s.accountService
+}
+
+func (s *serviceProvider) NumCheckerService() service.CheckerSevice {
+	if s.numChecker == nil {
+		s.numChecker = checker.NewService()
+	}
+	return s.numChecker
+}
+
+func (s *serviceProvider) AccrualService() service.AccrualService {
+	if s.accrualService == nil {
+		s.accrualService = accrual.NewService(
+			s.AccrualRepository(),
+			s.OrderRepository(),
+			s.AccountService(),
+		)
+	}
+	return s.accrualService
 }

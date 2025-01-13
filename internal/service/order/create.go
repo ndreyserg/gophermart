@@ -9,7 +9,7 @@ import (
 )
 
 func (s *service) Create(ctx context.Context, number string, userID int) (*model.Order, error) {
-	err := s.CheckNumber(number)
+	err := s.checker.Check(number)
 
 	if err != nil {
 		return nil, fmt.Errorf("create order check number err: %w", err)
@@ -18,6 +18,7 @@ func (s *service) Create(ctx context.Context, number string, userID int) (*model
 	order, err := s.orderRepository.Create(ctx, number, userID)
 
 	if err == nil {
+		s.accrualService.Accrue(order)
 		return order, nil
 	}
 

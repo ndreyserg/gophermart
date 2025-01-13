@@ -8,7 +8,7 @@ import (
 )
 
 func (s *service) GetWithdrawals(ctx context.Context, userID int) ([]*model.AccountWithdrawals, error) {
-	acc, err := s.getOrCreate(ctx, userID)
+	acc, err := s.GetOrCreate(ctx, userID)
 
 	if err != nil {
 		return nil, fmt.Errorf("get withdrawal error: %w,", err)

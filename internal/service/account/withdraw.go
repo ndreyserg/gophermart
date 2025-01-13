@@ -6,13 +6,13 @@ import (
 )
 
 func (s *service) Withdraw(ctx context.Context, userID int, orderNumber string, sum float64) error {
-	err := s.orders.CheckNumber(orderNumber)
+	err := s.checker.Check(orderNumber)
 
 	if err != nil {
 		return fmt.Errorf("witdraw error: %w", err)
 	}
 
-	account, err := s.getOrCreate(ctx, userID)
+	account, err := s.GetOrCreate(ctx, userID)
 
 	if err != nil {
 		return fmt.Errorf("witdraw error: %w", err)

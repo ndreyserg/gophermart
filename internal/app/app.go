@@ -43,7 +43,7 @@ func (a *App) init(ctx context.Context) error {
 		return fmt.Errorf("app init db error %w", err)
 	}
 	a.db = conn
-	a.serviceProvider = newServiceProvider(a.db)
+	a.serviceProvider = newServiceProvider(a.db, a.config.AccrualSystemAderess)
 	return nil
 }
 

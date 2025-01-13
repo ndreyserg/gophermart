@@ -1,13 +1,22 @@
-package order
+package checker
 
 import (
 	"regexp"
 	"strconv"
 
 	"github.com/ndreyserg/gophermart/internal/model"
+	def "github.com/ndreyserg/gophermart/internal/service"
 )
 
-func (s *service) CheckNumber(num string) error {
+var _ def.CheckerSevice = (*service)(nil)
+
+func NewService() *service {
+	return &service{}
+}
+
+type service struct{}
+
+func (s *service) Check(num string) error {
 	match, _ := regexp.MatchString(`^[0-9]+$`, num)
 
 	if !match {
