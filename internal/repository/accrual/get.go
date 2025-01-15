@@ -1,12 +1,42 @@
 package accrual
 
-import "github.com/ndreyserg/gophermart/internal/model"
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/ndreyserg/gophermart/internal/model"
+)
 
 func (r repository) Get(orderNumber string) (*model.Accrual, error) {
-	res := model.Accrual{
-		Order:   orderNumber,
-		Status:  model.OrderStatusProcessed,
-		Accrual: 200.5,
+	uri := r.addr + "/api/orders/" + orderNumber
+	resp, err := http.Get(uri)
+
+	if err != nil {
+		return nil, fmt.Errorf("error accrual system request %s: %w", uri, err)
 	}
-	return &res, nil
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		accrual := model.Accrual{}
+		decoder := json.NewDecoder(resp.Body)
+		err := decoder.Decode(&accrual)
+		if err != nil {
+			return nil, fmt.Errorf("accrual parse error %s: %w", uri, err)
+		}
+		return &accrual, nil
+	}
+
+	if resp.StatusCode == http.StatusNoContent {
+		return nil, fmt.Errorf("unknown order number %s", orderNumber)
+	}
+
+	if resp.StatusCode == http.StatusTooManyRequests {
+		return nil, model.ErrAccrualSystemTooManyRequests
+	}
+
+	return nil, fmt.Errorf("accrual system error request %s status %d", uri, resp.StatusCode)
 }

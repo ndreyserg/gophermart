@@ -7,11 +7,11 @@ import (
 var _ def.AccrualReposity = (*repository)(nil)
 
 type repository struct {
-	uri string
+	addr string
 }
 
-func NewRepository(uri string) *repository {
+func NewRepository(addr string) *repository {
 	return &repository{
-		uri: uri,
+		addr: addr,
 	}
 }

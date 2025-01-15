@@ -17,7 +17,7 @@ type OrderService interface {
 }
 
 type AccrualService interface {
-	Accrue(*model.Order)
+	AccrueAsync(*model.Order)
 }
 
 type AccountService interface {
