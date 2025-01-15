@@ -10,10 +10,12 @@ type Config struct {
 	DatabaseURI          string
 	AccrualSystemAderess string
 	SecretKey            string
+	LogLevel             string
 }
 
 func NewConfig() *Config {
 	conf := Config{}
+	flag.StringVar(&conf.LogLevel, "l", "info", "log level")
 	flag.StringVar(&conf.RunAddress, "a", "localhost:8080", "run address")
 	flag.StringVar(&conf.DatabaseURI, "d",
 		"postgres://gophermart:gophermart@localhost:5432/gophermart?sslmode=disable",

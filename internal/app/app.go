@@ -9,6 +9,7 @@ import (
 	"github.com/ndreyserg/gophermart/internal/api"
 	"github.com/ndreyserg/gophermart/internal/config"
 	"github.com/ndreyserg/gophermart/internal/db"
+	"github.com/ndreyserg/gophermart/internal/logger"
 )
 
 type App struct {
@@ -18,6 +19,7 @@ type App struct {
 }
 
 func (a *App) Run() error {
+	logger.Log.Info("start server ", a.config.RunAddress)
 	err := http.ListenAndServe(
 		a.config.RunAddress,
 		api.NewRouter(
@@ -37,6 +39,11 @@ func (a *App) Run() error {
 
 func (a *App) init(ctx context.Context) error {
 	a.config = config.NewConfig()
+	err := logger.Initialize(a.config.LogLevel)
+
+	if err != nil {
+		return fmt.Errorf("app init logger error %w", err)
+	}
 
 	conn, err := db.NewDB(ctx, a.config.DatabaseURI)
 	if err != nil {

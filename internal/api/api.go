@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/ndreyserg/gophermart/internal/api/session"
+	"github.com/ndreyserg/gophermart/internal/logger"
 	"github.com/ndreyserg/gophermart/internal/service"
 )
 
@@ -31,6 +32,7 @@ func NewRouter(
 		accountService: accountService,
 		session:        session.NewSession(sessionSecret),
 	}
+	a.chi.Use(logger.LoggerMiddleware)
 	a.chi.Post("/api/user/register", a.Register)
 	a.chi.Post("/api/user/login", a.Login)
 	a.chi.Post("/api/user/orders", a.CreateOrder)

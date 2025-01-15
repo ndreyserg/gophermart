@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ndreyserg/gophermart/internal/logger"
 	"github.com/ndreyserg/gophermart/internal/model"
 	"github.com/ndreyserg/gophermart/internal/repository"
 	def "github.com/ndreyserg/gophermart/internal/service"
@@ -57,7 +58,7 @@ func (s *service) AccrueAsync(order *model.Order) {
 		err := s.Accure(order)
 		if err != nil {
 			var re *repeatError
-			fmt.Println(err)
+			logger.Log.Error(err)
 			if errors.As(err, &re) {
 				time.Sleep(re.After)
 				s.AccrueAsync(order)
