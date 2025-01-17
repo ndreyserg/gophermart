@@ -13,6 +13,7 @@ import (
 	"github.com/ndreyserg/gophermart/internal/service/accrual"
 	"github.com/ndreyserg/gophermart/internal/service/checker"
 	"github.com/ndreyserg/gophermart/internal/service/order"
+	"github.com/ndreyserg/gophermart/internal/service/session"
 	"github.com/ndreyserg/gophermart/internal/service/user"
 )
 
@@ -26,14 +27,17 @@ type serviceProvider struct {
 	accrualRepository repository.AccrualReposity
 	accrualService    service.AccrualService
 	numChecker        service.CheckerSevice
+	sessionService    service.SessionService
 	db                *sql.DB
 	accrualURI        string
+	secret            string
 }
 
-func newServiceProvider(db *sql.DB, accrualURI string) *serviceProvider {
+func newServiceProvider(db *sql.DB, accrualURI string, secret string) *serviceProvider {
 	return &serviceProvider{
 		db:         db,
 		accrualURI: accrualURI,
+		secret:     secret,
 	}
 }
 
@@ -107,4 +111,11 @@ func (s *serviceProvider) AccrualService() service.AccrualService {
 		)
 	}
 	return s.accrualService
+}
+
+func (s *serviceProvider) SessionService() service.SessionService {
+	if s.sessionService == nil {
+		s.sessionService = session.NewService(s.secret)
+	}
+	return s.sessionService
 }

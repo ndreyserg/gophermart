@@ -26,7 +26,7 @@ func (a *App) Run() error {
 			a.serviceProvider.UserService(),
 			a.serviceProvider.OrderService(),
 			a.serviceProvider.AccountService(),
-			a.config.SecretKey,
+			a.serviceProvider.SessionService(),
 		),
 	)
 
@@ -50,7 +50,7 @@ func (a *App) init(ctx context.Context) error {
 		return fmt.Errorf("app init db error %w", err)
 	}
 	a.db = conn
-	a.serviceProvider = newServiceProvider(a.db, a.config.AccrualSystemAderess)
+	a.serviceProvider = newServiceProvider(a.db, a.config.AccrualSystemAderess, a.config.SecretKey)
 	return nil
 }
 

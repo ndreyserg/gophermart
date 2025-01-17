@@ -6,6 +6,7 @@ package mocks
 
 import (
 	context "context"
+	http "net/http"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -270,4 +271,56 @@ func (m *MockCheckerSevice) Check(num string) error {
 func (mr *MockCheckerSeviceMockRecorder) Check(num interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Check", reflect.TypeOf((*MockCheckerSevice)(nil).Check), num)
+}
+
+// MockSessionService is a mock of SessionService interface.
+type MockSessionService struct {
+	ctrl     *gomock.Controller
+	recorder *MockSessionServiceMockRecorder
+}
+
+// MockSessionServiceMockRecorder is the mock recorder for MockSessionService.
+type MockSessionServiceMockRecorder struct {
+	mock *MockSessionService
+}
+
+// NewMockSessionService creates a new mock instance.
+func NewMockSessionService(ctrl *gomock.Controller) *MockSessionService {
+	mock := &MockSessionService{ctrl: ctrl}
+	mock.recorder = &MockSessionServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSessionService) EXPECT() *MockSessionServiceMockRecorder {
+	return m.recorder
+}
+
+// GetUserID mocks base method.
+func (m *MockSessionService) GetUserID(r *http.Request) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserID", r)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserID indicates an expected call of GetUserID.
+func (mr *MockSessionServiceMockRecorder) GetUserID(r interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserID", reflect.TypeOf((*MockSessionService)(nil).GetUserID), r)
+}
+
+// Open mocks base method.
+func (m *MockSessionService) Open(userID int, w http.ResponseWriter, r *http.Request) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Open", userID, w, r)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Open indicates an expected call of Open.
+func (mr *MockSessionServiceMockRecorder) Open(userID, w, r interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockSessionService)(nil).Open), userID, w, r)
 }

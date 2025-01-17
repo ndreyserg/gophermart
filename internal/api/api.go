@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/ndreyserg/gophermart/internal/api/session"
 	"github.com/ndreyserg/gophermart/internal/logger"
 	"github.com/ndreyserg/gophermart/internal/service"
 )
@@ -14,7 +13,7 @@ type api struct {
 	userService    service.UserService
 	orderService   service.OrderService
 	accountService service.AccountService
-	session        session.Session
+	session        service.SessionService
 }
 
 const contentTypeHeader = "content-type"
@@ -24,13 +23,13 @@ func NewRouter(
 	userService service.UserService,
 	orderService service.OrderService,
 	accountService service.AccountService,
-	sessionSecret string) http.Handler {
+	sessionService service.SessionService) http.Handler {
 	a := api{
 		chi:            chi.NewRouter(),
 		userService:    userService,
 		orderService:   orderService,
 		accountService: accountService,
-		session:        session.NewSession(sessionSecret),
+		session:        sessionService,
 	}
 	a.chi.Use(logger.LoggerMiddleware)
 	a.chi.Post("/api/user/register", a.Register)

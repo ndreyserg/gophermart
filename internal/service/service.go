@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/ndreyserg/gophermart/internal/model"
 )
@@ -29,4 +30,9 @@ type AccountService interface {
 
 type CheckerSevice interface {
 	Check(num string) error
+}
+
+type SessionService interface {
+	Open(userID int, w http.ResponseWriter, r *http.Request) error
+	GetUserID(r *http.Request) (int, error)
 }

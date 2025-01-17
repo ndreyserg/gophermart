@@ -7,15 +7,13 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	def "github.com/ndreyserg/gophermart/internal/service"
 )
 
-type Session interface {
-	Open(userID int, w http.ResponseWriter, r *http.Request) error
-	GetUserID(r *http.Request) (int, error)
-}
+var _ def.SessionService = (*service)(nil)
 
-func NewSession(secret string) Session {
-	return &session{
+func NewService(secret string) *service {
+	return &service{
 		secret: secret,
 	}
 }
@@ -27,11 +25,11 @@ type claims struct {
 
 const tokenKey = "token"
 
-type session struct {
+type service struct {
 	secret string
 }
 
-func (s *session) Open(userID int, w http.ResponseWriter, r *http.Request) error {
+func (s *service) Open(userID int, w http.ResponseWriter, r *http.Request) error {
 	strToken, err := s.newToken(userID)
 	if err != nil {
 		return err
@@ -44,7 +42,7 @@ func (s *session) Open(userID int, w http.ResponseWriter, r *http.Request) error
 	return nil
 }
 
-func (s *session) newToken(userID int) (string, error) {
+func (s *service) newToken(userID int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(3 * time.Hour)),
@@ -61,7 +59,7 @@ func (s *session) newToken(userID int) (string, error) {
 	return res, nil
 }
 
-func (s *session) GetUserID(r *http.Request) (int, error) {
+func (s *service) GetUserID(r *http.Request) (int, error) {
 	var strToken string
 
 	cookies := r.Cookies()
