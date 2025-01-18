@@ -152,3 +152,117 @@ func TestGetBalance(t *testing.T) {
 		})
 	}
 }
+
+func TestGetWithdrawals(t *testing.T) {
+	tests := []tCase{
+		{
+			name:   "repo error",
+			userID: 1,
+			prepare: func(d *deps) {
+				d.accRepo.EXPECT().FindByUserID(gomock.Any(),
+					gomock.Eq(1)).Return(&model.Account{ID: 2}, nil)
+				d.accRepo.EXPECT().GetWithdrawals(gomock.Any(), gomock.Eq(2)).Return(nil, errors.New("repo error"))
+			},
+			expectErr: "get withdrawal error: repo error",
+		},
+		{
+			name:   "success find",
+			userID: 1,
+			prepare: func(d *deps) {
+				d.accRepo.EXPECT().FindByUserID(gomock.Any(), gomock.Eq(1)).Return(&model.Account{ID: 2}, nil)
+				d.accRepo.EXPECT().GetWithdrawals(gomock.Any(), gomock.Eq(2)).Return([]*model.AccountWithdrawals{
+					{ID: 1, OrderNumber: "233"},
+				}, nil)
+			},
+			expectErr: "",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			d := initDeps(ctrl)
+			test.prepare(d)
+			s := NewService(d.accRepo, d.checker)
+
+			_, err := s.GetWithdrawals(context.Background(), test.userID)
+
+			if test.expectErr != "" {
+				assert.ErrorContains(t, err, test.expectErr)
+			} else {
+				assert.Nil(t, err)
+			}
+		})
+	}
+}
+
+func TestWithdraw(t *testing.T) {
+	type tCaseWithdraw struct {
+		tCase
+		orderNumber string
+		sum         float64
+	}
+	tests := []tCaseWithdraw{
+		{
+			tCase: tCase{
+				name:   "uncoreect order number",
+				userID: 1,
+				prepare: func(d *deps) {
+					d.checker.EXPECT().Check(gomock.Eq("123")).Return(errors.New("uncorrect number"))
+				},
+				expectErr: "witdraw error: uncorrect number",
+			},
+			orderNumber: "123",
+			sum:         10,
+		},
+		{
+			tCase: tCase{
+				name:   "repo error",
+				userID: 1,
+				prepare: func(d *deps) {
+					d.checker.EXPECT().Check(gomock.Eq("123")).Return(nil)
+					d.accRepo.EXPECT().FindByUserID(gomock.Any(),
+						gomock.Eq(1)).Return(&model.Account{ID: 2}, nil)
+					d.accRepo.EXPECT().Withdraw(gomock.Any(), gomock.Eq(2),
+						gomock.Eq(float64(10)), gomock.Eq("123")).Return(errors.New("acc repo error"))
+				},
+				expectErr: "witdraw error: acc repo error",
+			},
+			orderNumber: "123",
+			sum:         10,
+		},
+		{
+			tCase: tCase{
+				name:   "succesess",
+				userID: 1,
+				prepare: func(d *deps) {
+					d.checker.EXPECT().Check(gomock.Eq("123")).Return(nil)
+					d.accRepo.EXPECT().FindByUserID(gomock.Any(),
+						gomock.Eq(1)).Return(&model.Account{ID: 2}, nil)
+					d.accRepo.EXPECT().Withdraw(gomock.Any(), gomock.Eq(2),
+						gomock.Eq(float64(10)), gomock.Eq("123")).Return(nil)
+				},
+				expectErr: "",
+			},
+			orderNumber: "123",
+			sum:         10,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			d := initDeps(ctrl)
+			test.prepare(d)
+			s := NewService(d.accRepo, d.checker)
+
+			err := s.Withdraw(context.Background(), test.userID, test.orderNumber, test.sum)
+
+			if test.expectErr != "" {
+				assert.ErrorContains(t, err, test.expectErr)
+			} else {
+				assert.Nil(t, err)
+			}
+		})
+	}
+}

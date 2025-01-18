@@ -27,7 +27,6 @@ func (s *service) Create(ctx context.Context, number string, userID int) (*model
 	}
 
 	order, err = s.orderRepository.FindByNumber(ctx, number)
-	s.accrualService.AccrueAsync(order)
 	if err != nil {
 		return nil, fmt.Errorf("create order error: %w", err)
 	}
